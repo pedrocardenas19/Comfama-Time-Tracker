@@ -1,0 +1,21 @@
+{% extends 'time_tracker/base.html' %}
+
+{% block title %}Add Task Report{% endblock %}
+
+{% block content %}
+    <h1>Add Task Report</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select name="category" id="category">
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'project-detail' project.id %}">Back to Project</a>
+{% endblock %}

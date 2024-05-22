@@ -1,0 +1,92 @@
+{% extends 'time_tracker/base.html' %}
+
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+    <h1>{{ project.name }}</h1>
+    <p>Required hours: {{ project.required_hours }}</p>
+    <p>Start date: {{ project.start_date }}</p>
+    <p>End date: {{ project.end_date }}</p>
+    
+    <h2>Members</h2>
+    <div class="scroll-container">
+        <ul>
+            {% for member in project.members.all %}
+            <li>{{ member.username }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <h2>Categories</h2>
+    <div class="scroll-container">
+        <ul>
+            {% for category in categories %}
+            <li>
+                {{ category.name }}
+                {% if user.is_staff %}
+                <a href="{% url 'taskcategory-update' category.id %}">Edit</a>
+                <a href="{% url 'taskcategory-delete' category.id %}">Delete</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    {% if user.is_staff %}
+    <h3>Add Category</h3>
+    <form method="post" action="{% url 'taskcategory-create' project.id %}">
+        {% csrf_token %}
+        {{ category_form.as_p }}
+        <button type="submit">Add Category</button>
+    </form>
+    {% endif %}
+    
+    <h2>Task Reports</h2>
+    <div class="scroll-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Time Spent</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ report.title }}</td>
+                    <td>{{ report.time_spent }} hours</td>
+                    <td>{{ report.date }}</td>
+                    <td>{{ report.category.name }}</td>
+                    <td>{{ report.user.username }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Project Progress</h2>
+    <img src="data:image/png;base64,{{ pie_chart }}" alt="Project Progress">
+
+    {% if user in project.members.all or user.is_staff %}
+    <h3>Add Task Report</h3>
+    <form method="post" action="{% url 'taskreport-create' project.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select name="category" id="category">
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {{ report_form.as_p }}
+        <button type="submit">Add Task Report</button>
+    </form>
+    {% endif %}
+    
+    <a href="{% url 'project-update' project.id %}">Edit Project</a>
+    <a href="{% url 'project-delete' project.id %}">Delete Project</a>
+{% endblock %}

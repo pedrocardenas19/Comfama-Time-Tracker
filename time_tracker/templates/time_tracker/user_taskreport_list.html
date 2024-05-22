@@ -1,0 +1,31 @@
+{% extends 'time_tracker/base.html' %}
+
+{% block title %}My Task Reports{% endblock %}
+
+{% block content %}
+    <h1>My Task Reports</h1>
+    <div class="scroll-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Time Spent</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Project</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ report.title }}</td>
+                    <td>{{ report.time_spent }} hours</td>
+                    <td>{{ report.date }}</td>
+                    <td>{{ report.category.name }}</td>
+                    <td>{{ report.category.project.name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
